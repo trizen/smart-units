@@ -1,5 +1,9 @@
 #!/usr/bin/sidef
 
+#`(if running under some shell) {
+    eval 'exec /usr/bin/sidef $0 ${1+"$@"}'
+}
+
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
