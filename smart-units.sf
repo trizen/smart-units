@@ -18,6 +18,9 @@ func help {
     print <<"USAGE";
 usage: #{File.new(__FILE__).basename} [text]
 
+options:
+    -p  --precision=i : set floating point precision (default: 2)
+
 examples:
     144 F to C
     convert 10kg into pounds
@@ -64,10 +67,8 @@ HELP
 
 }
 
-func convert(amount, from, to) {
-      var precision_f = '%.2f';            # this should be a config option
-
-      var conversions = :(
+class Units(precision = 2) {
+    static conversions = :(
         :mass => :(  # all relative to 1 kilogram
             :grams     => :(:re => /^(?:grams?|gr)$/i,         :factor => 1e-3),
             :quintals  => :(:re => /^(?:quintals?)$/i,         :factor => 1e2),
@@ -139,34 +140,40 @@ func convert(amount, from, to) {
         ),
     );
 
-    conversions.each{ |category, value|
-        value.each{ |from_unit, from_data|
-            if (from.match(from_data[:re])) {
-                value.each{ |_, to_data|
-                    if (to.match(to_data[:re])) {
-                        var new_amount = 0;
-                        if (category == :temperature) {
-                            var std_from = from_data[:code].call(amount, false);
-                            new_amount   = to_data[:code].call(std_from, true);
-                        } else {
-                            new_amount = (amount / to_data[:factor] * from_data[:factor]);
-                        };
-                        say (new_amount.is_int ? new_amount : precision_f%new_amount);
-                        return true;
-                    }
-                };
-                STDERR.say("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...");
-                return false;
+    method convert(amount, from, to) {
+        conversions.each { |category, value|
+            value.each { |from_unit, from_data|
+                if (from.match(from_data[:re])) {
+                    value.each{ |_, to_data|
+                        if (to.match(to_data[:re])) {
+                            var new_amount = 0;
+                            if (category == :temperature) {
+                                var std_from = from_data[:code].call(amount, false);
+                                new_amount   = to_data[:code].call(std_from, true);
+                            } else {
+                                new_amount = (amount / to_data[:factor] * from_data[:factor]);
+                            };
+                            say (new_amount.is_int ? new_amount : "%.#{self.precision}f"%new_amount);
+                            return true;
+                        }
+                    };
+                    STDERR.say("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...");
+                    return false;
+                }
             }
         }
-    }
 
-    STDERR.say("I don't know how to convert #{from} to #{to}... Is even '#{from}' a real unit?");
-    return false;
+        STDERR.say("I don't know how to convert #{from} to #{to}... Is even '#{from}' a real unit?");
+        return false;
+    }
 }
 
 func main(command) {
     var match = command.match(/^
+
+        # precision option (-p [i])
+        (?:--?p(?:recision)?(?:=|\h*)([0-9]+)\h+)?
+
         # command or question
         (?:(?:convert|how\s+much\s+is|what(?:\s+is|\W*s)(?:\s+the)?(?:\s+equivalent\s+of)?)\s+)?
 
@@ -184,7 +191,13 @@ func main(command) {
     $/ix);
 
     if (match) {
-        var (amount, from, to) = match.cap[0..2]...;
+        var (precision, amount, from, to) = match.cap...;
+
+        if (precision == '') {
+            precision = 2;
+        } else {
+            precision.to_i!;
+        }
 
         if (amount ~~ ['a','an','one','']) {
             amount = 1;
@@ -192,7 +205,8 @@ func main(command) {
             amount.to_f!;
         }
 
-        return convert(amount, from, to);
+        var units = Units(precision: precision);
+        return units.convert(amount, from, to);
     }
     else {
         more_help();
