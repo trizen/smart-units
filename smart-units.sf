@@ -92,7 +92,7 @@ class Units(precision = 2) {
             :days         => :(:re => /^(?:days?)$/i,                           :factor => 86400),
             :millidays    => :(:re => /^(?:millidays?|(?-i:md))$/i,             :factor => 86.4),
             :weeks        => :(:re => /^(?:weeks?)$/i,                          :factor => 604800),
-            :months       => :(:re => /^(?:mon(?:th)?s?)$/i,                    :factor => 2.62974e6),
+            :months       => :(:re => /^(?:mon(?:th)?s?)$/i,                    :factor => 2629743.83),
             :years        => :(:re => /^(?:years?)$/i,                          :factor => 31556952),
         ),
         :velocity    => :( # all relative to 1 meter / second
