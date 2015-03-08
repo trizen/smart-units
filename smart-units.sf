@@ -7,12 +7,14 @@
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
+# Latest edit on: 08 March 2015
 # Website: https://github.com/trizen/smart-units
-# Code originaly written for betty (https://github.com/trizen/betty/blob/dev/lib/units.rb)
 
 #
 ## Requires Sidef: https://github.com/trizen/sidef
 #
+
+# VERSION 0.01
 
 func help {
     print <<"USAGE";
