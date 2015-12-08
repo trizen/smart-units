@@ -65,6 +65,7 @@ class Units(precision = 2) {
             celsius    => :(re => /^(?:celsius|(?-i:C))$/i,    code => {|n, _| n} ),
             kelvin     => :(re => /^(?:kelvin|(?-i:K))$/i,     code => {|n, to| to ? (n + 273.15) : (-273.15 + n)} ),
             fahrenheit => :(re => /^(?:fahrenheit|(?-i:F))$/i, code => {|n, to| to ? (32 + n*9/5) : ((n - 32) * 5/9)} ),
+            rankine    => :(re => /^(?:rankine|(?-i:R))$/i,    code => {|n, to| to ? ((n + 273.15) * 9/5) : (n*5/9 - 273.15)} ),
         ),
         time => :(  # all relative to 1 second
             nanoseconds  => :(re => /^(?:nanosec(?:ond)?s?|(?-i:ns))/i,     factor => 1e-9),
