@@ -7,14 +7,14 @@
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
-# Latest edit on: 12 December 2015
+# Latest edit on: 31 January 2016
 # Website: https://github.com/trizen/smart-units
 
 #
 ## Requires Sidef: https://github.com/trizen/sidef
 #
 
-define VERSION = 0.05;
+define VERSION = 0.06;
 
 func more_help {
     print <<"HELP";
@@ -37,6 +37,15 @@ Velocity:
     4444 mph to km/s        : convert miles per hour to km/s
     50 m/s to km/h          : convert meters per second to km/h
     speed of sound in mi/s  : convert the speed of sound in mi/s
+
+Plane angle:
+    2 rad in deg      : convert radians to degrees
+    90 deg in rad     : convert degrees to radians
+
+Frequency:
+    300 mhz to hz     : convert megahertz to hertz
+    42 khz to ghz     : convert kilohertz to gigahertz
+    10 ghz to mhz     : convert gigahertz to megahertz
 
 Time:
     2 hours in sec      : convert hours to seconds
@@ -124,6 +133,16 @@ class Units(precision = 2) {
             zettabytes     => :(re => /^(zettabytes?|zi?b)$/in, factor => 1024 ** 7),
             yottabytes     => :(re => /^(yottabytes?|yi?b)$/in, factor => 1024 ** 8),
         ),
+        plane_angle => :(   # all relative to 1 radian
+            radian  =>  :(re => /^(rad(ians?)?)$/in,   factor => 1),
+            degree  =>  :(re => /^(deg(rees?)?)$/in,   factor => Math.pi / 180),
+        ),
+        frequency => :(     # all relative to 1 hertz
+            hertz     => :(re => /^(hertz|hz)$/in,         factor => 1),
+            kilohertz => :(re => /^(kiloherz|khz)$/in,     factor => 1e3),
+            megahertz => :(re => /^(megahertz|mhz)$/in,    factor => 1e6),
+            gigahertz => :(re => /^(gigahertz|ghz)$/in,    factor => 1e9),
+        ),
     );
 
     method convert(amount, from, to) {
@@ -154,7 +173,7 @@ class Units(precision = 2) {
     }
 }
 
-var precision = 2;
+var precision = 10;
 var interactive = false;
 
 func help {

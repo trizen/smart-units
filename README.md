@@ -11,7 +11,7 @@ Examples:
     convert 10kg into pounds
     whats the equivalent of 21 inches in meters
     what is the speed of light in miles per hour
-    
+
 Mass:
     42 kg to lbs        : convert kilograms to pounds
     30 t to grams       : convert tonnes to grams
@@ -31,6 +31,15 @@ Velocity:
     4444 mph to km/s        : convert miles per hour to km/s
     50 m/s to km/h          : convert meters per second to km/h
     speed of sound in mi/s  : convert the speed of sound in mi/s
+
+Plane angle:
+    2 rad in deg      : convert radians to degrees
+    90 deg in rad     : convert degrees to radians
+
+Frequency:
+    300 mhz to hz     : convert megahertz to hertz
+    42 khz to ghz     : convert kilohertz to gigahertz
+    10 ghz to mhz     : convert gigahertz to megahertz
 
 Time:
     2 hours in sec      : convert hours to seconds
