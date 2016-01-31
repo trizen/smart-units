@@ -43,9 +43,9 @@ Plane angle:
     90 deg in rad     : convert degrees to radians
 
 Frequency:
-    300 mhz to hz     : convert megahertz to hertz
-    42 khz to ghz     : convert kilohertz to gigahertz
-    10 ghz to mhz     : convert gigahertz to megahertz
+    30 MHz to Hz     : convert megahertz to hertz
+    42 KHz to GHz    : convert kilohertz to gigahertz
+    10 GHz to MHz    : convert gigahertz to megahertz
 
 Time:
     2 hours in sec      : convert hours to seconds
@@ -152,7 +152,7 @@ class Units(precision = 2) {
                     value.each{ |_, to_data|
                         if (to.match(to_data{:re})) {
                             var new_amount = 0;
-                            if (category == :temperature) {
+                            if (from_data.has_key(:code) && to_data.has_key(:code)) {
                                 var std_from = from_data{:code}(amount, false);
                                 new_amount   = to_data{:code}(std_from, true);
                             } else {
