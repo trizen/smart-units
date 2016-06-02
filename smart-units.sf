@@ -241,8 +241,9 @@ func main(command) {
 
         if (amount ~~ ['a','an','one','']) {
             amount = 1;
-        } else {
-            amount.to_f!;
+        }
+        else {
+            amount = Number(amount);
         }
 
         return units.convert(amount, from, to);
