@@ -37,9 +37,9 @@ Plane angle:
     90 deg in rad     : convert degrees to radians
 
 Frequency:
-    300 mhz to hz     : convert megahertz to hertz
-    42 khz to ghz     : convert kilohertz to gigahertz
-    10 ghz to mhz     : convert gigahertz to megahertz
+    30 MHz to Hz     : convert megahertz to hertz
+    42 KHz to GHz    : convert kilohertz to gigahertz
+    10 GHz to MHz    : convert gigahertz to megahertz
 
 Time:
     2 hours in sec      : convert hours to seconds
