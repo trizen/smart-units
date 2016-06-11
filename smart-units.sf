@@ -149,7 +149,7 @@ class Units(precision = 2) {
         conversions.each { |category, value|
             value.each { |from_unit, from_data|
                 if (from.match(from_data{:re})) {
-                    value.each{ |_, to_data|
+                    value.each_v{ |to_data|
                         if (to.match(to_data{:re})) {
                             var new_amount = 0;
                             if (from_data.has_key(:code) && to_data.has_key(:code)) {
