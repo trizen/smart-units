@@ -7,12 +7,13 @@
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
-# Latest edit on: 13 November 2016
-# Website: https://github.com/trizen/smart-units
+# Edit: 18 June 2018
+# https://github.com/trizen/smart-units
 
-#
-## Requires Sidef: https://github.com/trizen/sidef
-#
+# A pretty clever command-line units converter (written in Sidef).
+
+# Get the Sidef programming language from:
+#   https://github.com/trizen/sidef
 
 define VERSION = 0.07;
 
@@ -49,7 +50,7 @@ Frequency:
 
 Time:
     2 hours in sec      : convert hours to seconds
-    3 years in mons     : convert years to mons
+    3 years in mons     : convert years to months
     4 days in hours     : convert days to hours
 
 Information:
