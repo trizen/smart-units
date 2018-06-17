@@ -43,7 +43,7 @@ Frequency:
 
 Time:
     2 hours in sec      : convert hours to seconds
-    3 years in mons     : convert years to mons
+    3 years in mons     : convert years to months
     4 days in hours     : convert days to hours
 
 Information:
