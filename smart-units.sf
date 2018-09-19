@@ -65,11 +65,30 @@ HELP
 class Units(precision = 2) {
     static conversions = :(
         mass => :(  # all relative to 1 kilogram
-            grams     => :(re => /^(grams?|gr)$/in,         factor => 1e-3),
-            quintals  => :(re => /^(quintals?)$/in,         factor => 1e2),
-            tonnes    => :(re => /^(tonn?es?|(?-i:t))$/in,  factor => 1e3),
-            kilograms => :(re => /^(kg|kilograms?)$/in,     factor => 1),
-            pounds    => :(re => /^(pounds?|lbs)$/in,       factor => 0.45359237),
+            nanograms    => :(re => /^(ng|nanograms?)$/in,          factor => 1e-12),
+            micrograms   => :(re => /^(μg|micrograms?)$/in,         factor => 1e-9),
+            milligrams   => :(re => /^(mg|mill?igrams?)$/in,        factor => 1e-6),
+            centigrams   => :(re => /^(cg|centigrams?)$/in,         factor => 1e-5),
+            decigrams    => :(re => /^(dg|decigrams?)$/in,          factor => 1e-4),
+            grams        => :(re => /^(grams?|gr)$/in,              factor => 1e-3),
+            decagrams    => :(re => /^(dag|decagrams?)$/in,         factor => 1e-2),
+            hectograms   => :(re => /^(hg|hectograms?)$/in,         factor => 1e-1),
+            kilograms    => :(re => /^(kg|kilograms?)$/in,          factor => 1),
+            quintals     => :(re => /^(quintals?)$/in,              factor => 1e2),
+            tonnes       => :(re => /^(tonn?es?|(?-i:t))$/in,       factor => 1e3),
+
+            nanolitres   => :(re => /^(nl|nanolit(re|er)s?)$/in,    factor => 1e-9),
+            microlitres  => :(re => /^(μl|microlit(re|er)s?)$/in,   factor => 1e-6),
+            millilitres  => :(re => /^(ml|mill?ilit(re|er)s?)$/in,  factor => 1e-3),
+            centilitres  => :(re => /^(cl|centilit(re|er)s?)$/in,   factor => 1e-2),
+            decilitres   => :(re => /^(dl|decilit(re|er)s?)$/in,    factor => 1e-1),
+            litres       => :(re => /^(l|lit(re|er)s?)$/in,         factor => 1),
+            decalitres   => :(re => /^(dal|decalit(re|er)s?)$/in,   factor => 1e1),
+            hectolitres  => :(re => /^(hl|hectolit(re|er)s?)$/in,   factor => 1e2),
+            kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,    factor => 1e3),
+
+            pounds       => :(re => /^(pounds?|lbs)$/in,            factor => 0.45359237),
+            gallons      => :(re => /^(gallons?|gall?s?)$/in,       factor => 3.78541),
         ),
         temperature => :(   # using Celsius as the standard
             celsius    => :(re => /^(celsius|(?-i:C))$/in,    code => {|n, _| n} ),
