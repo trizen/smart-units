@@ -15,10 +15,10 @@
 # Get the Sidef programming language from:
 #   https://github.com/trizen/sidef
 
-define VERSION = 0.07;
+define VERSION = 0.08
 
 func more_help {
-    print <<"HELP";
+    print <<"HELP"
 Mass:
     42 kg to lbs        : convert kilograms to pounds
     30 t to grams       : convert tonnes to grams
@@ -88,7 +88,7 @@ class Units(precision = 2) {
             kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,    factor => 1e3),
 
             pounds       => :(re => /^(pounds?|lbs)$/in,            factor => 0.45359237),
-            gallons      => :(re => /^(gallons?|gall?s?)$/in,       factor => 3.78541),
+            gallons      => :(re => /^(gall?ons?|gall?s?)$/in,      factor => 3.78541),
         ),
         temperature => :(   # using Celsius as the standard
             celsius    => :(re => /^(celsius|(?-i:C))$/in,    code => {|n, _| n} ),
@@ -163,7 +163,7 @@ class Units(precision = 2) {
             megahertz => :(re => /^(megahertz|mhz)$/in,    factor => 1e6),
             gigahertz => :(re => /^(gigahertz|ghz)$/in,    factor => 1e9),
         ),
-    );
+    )
 
     method convert(amount, from, to) {
         conversions.each { |category, value|
@@ -173,31 +173,31 @@ class Units(precision = 2) {
                         if (to.match(to_data{:re})) {
                             var new_amount = 0;
                             if (from_data.has_key(:code) && to_data.has_key(:code)) {
-                                var std_from = from_data{:code}(amount, false);
-                                new_amount   = to_data{:code}(std_from, true);
+                                var std_from = from_data{:code}(amount, false)
+                                new_amount   = to_data{:code}(std_from, true)
                             } else {
-                                new_amount = (amount / to_data{:factor} * from_data{:factor});
+                                new_amount = (amount / to_data{:factor} * from_data{:factor})
                             }
-                            say (new_amount.is_int ? new_amount : new_amount.round(-precision));
-                            return true;
+                            say (new_amount.is_int ? new_amount : new_amount.round(-precision))
+                            return true
                         }
                     }
-                    STDERR.say("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...");
-                    return false;
+                    STDERR.say("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...")
+                    return false
                 }
             }
         }
 
-        STDERR.say("I don't know how to convert #{from} to #{to}... Is '#{from}' a real unit?");
-        return false;
+        STDERR.say("I don't know how to convert #{from} to #{to}... Is '#{from}' a real unit?")
+        return false
     }
 }
 
-var precision = 10;
-var interactive = false;
+var precision = 10
+var interactive = false
 
 func help {
-    print <<"USAGE";
+    print <<"USAGE"
 usage: #{File.new(__FILE__).basename} [text]
 
 options:
@@ -210,32 +210,32 @@ examples:
     whats the equivalent of 21 inches in meters
     what is the speed of light in miles per hour
 USAGE
-    Sys.exit(0);
+    Sys.exit(0)
 }
 
 var cmd = [];
 while (!ARGV.is_empty) {
     given (var arg = ARGV.shift) {
         when ('-p') {
-            precision = Num(ARGV.shift);
+            precision = Num(ARGV.shift)
         }
         when ('-i') {
-            interactive = true;
+            interactive = true
         }
         when ('-h') {
-            help();
+            help()
         }
         default {
-            cmd << arg;
+            cmd << arg
         }
     }
 }
 
 if (cmd.is_empty && STDIN.is_on_tty) {
-    interactive = true;
+    interactive = true
 }
 
-var units = Units(precision);
+var units = Units(precision)
 
 func main(command) {
     var match = command.match(/^\s*
@@ -254,33 +254,33 @@ func main(command) {
 
         # unit to (up to 3 words)
         (\S+(?:\s+\S+){0,2})
-    \s*$/ix);
+    \s*$/ix)
 
     if (match) {
-        var (amount, from, to) = match...;
+        var (amount, from, to) = match...
 
         if (amount ~~ ['a','an','one','']) {
-            amount = 1;
+            amount = 1
         }
         else {
-            amount = Number(amount);
+            amount = Number(amount)
         }
 
-        return units.convert(amount, from, to);
+        return units.convert(amount, from, to)
     }
     else {
-        more_help();
+        more_help()
     }
 
-    return false;
+    return false
 }
 
 if (interactive) {
-    print <<"EOT";
+    print <<"EOT"
 Welcome to smart-units #{VERSION} in interactive mode.
 EOT
     loop {
-        var line = read(">> ", String) \\ break;
+        var line = read(">> ", String) \\ break
 
         if (line ~~ ['q', 'exit']) {
             break
@@ -290,5 +290,5 @@ EOT
     }
 }
 else {
-    Sys.exit((cmd.is_empty ? help() : main(cmd.join(' '))) ? 0 : 1);
+    Sys.exit((cmd.is_empty ? help() : main(cmd.join(' '))) ? 0 : 1)
 }
