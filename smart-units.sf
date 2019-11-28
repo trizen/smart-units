@@ -269,6 +269,11 @@ func main(command) {
         return units.convert(amount, from, to)
     }
     else {
+
+        if (command =~ /help/i) {
+            return more_help()
+        }
+
         say try { eval(command) } \\ "..."
     }
 
