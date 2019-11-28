@@ -7,7 +7,7 @@
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
-# Edit: 18 June 2018
+# Edit: 28 November 2019
 # https://github.com/trizen/smart-units
 
 # A pretty clever command-line units converter (written in Sidef).
@@ -15,7 +15,7 @@
 # Get the Sidef programming language from:
 #   https://github.com/trizen/sidef
 
-define VERSION = 0.08
+define VERSION = 0.09
 
 func more_help {
     print <<"HELP"
@@ -269,7 +269,7 @@ func main(command) {
         return units.convert(amount, from, to)
     }
     else {
-        more_help()
+        say try { eval(command) } \\ "..."
     }
 
     return false
