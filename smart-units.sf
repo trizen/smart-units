@@ -274,7 +274,7 @@ func main(command) {
             return more_help()
         }
 
-        say try { eval(command) } \\ "..."
+        say (try { eval(command) } \\ "...")
     }
 
     return false
