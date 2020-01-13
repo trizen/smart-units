@@ -88,6 +88,7 @@ class Units(precision = 2) {
             kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,    factor => 1e3),
 
             pounds       => :(re => /^(pounds?|lbs)$/in,            factor => 0.45359237),
+            stones       => :(re => /^(stones?|st)$/in,             factor => 6.35029318),
             gallons      => :(re => /^(gall?ons?|gall?s?)$/in,      factor => 3.78541),
         ),
         temperature => :(   # using Celsius as the standard
