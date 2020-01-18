@@ -47,9 +47,9 @@ Time:
     4 days in hours     : convert days to hours
 
 Information:
-    one byte to bits    : convert bytes to bits
-    32MB in KB          : convert megabytes in kilobytes
-    3 TB in GB          : convert terabytes in gigabytes
+    32 MB in KB         : convert megabytes to kilobytes
+    42 TiB in GiB       : convert tebibytes to gibibytes
+    97 Gbit in MiB      : convert gigabits to mebibytes
 
 ...and more that are left for you to discover!
 ```

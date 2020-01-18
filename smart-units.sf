@@ -54,9 +54,9 @@ Time:
     4 days in hours     : convert days to hours
 
 Information:
-    one byte to bits    : convert bytes to bits
-    32MB in KB          : convert megabytes in kilobytes
-    3 TB in GB          : convert terabytes in gigabytes
+    32 MB in KB         : convert megabytes to kilobytes
+    42 TiB in GiB       : convert tebibytes to gibibytes
+    97 Gbit in MiB      : convert gigabits to mebibytes
 
 ...and more that are left for you to discover!
 HELP
@@ -142,17 +142,45 @@ class Units {
             light_days       => :(re => /^(light[-\s]*days?|ld)$/in,       factor => 2.59020683712e13),
             light_years      => :(re => /^(light[-\s]*years?|ly)$/in,      factor => 9.4607304725808e15),
         ),
-        information   => :( # all relative to 1 byte
-            bits           => :(re => /^(bits?)$/in,            factor => 1/8),
-            bytes          => :(re => /^(bytes?)$/in,           factor => 1),
-            kilobytes      => :(re => /^(kilobytes?|ki?b)$/in,  factor => 1024**1),
-            megabytes      => :(re => /^(megabytes?|mi?b)$/in,  factor => 1024**2),
-            gigabytes      => :(re => /^(gigabytes?|gi?b)$/in,  factor => 1024**3),
-            terabytes      => :(re => /^(terabytes?|ti?b)$/in,  factor => 1024**4),
-            petabytes      => :(re => /^(petabytes?|pi?b)$/in,  factor => 1024**5),
-            exabytes       => :(re => /^(exabytes?|ei?b)$/in,   factor => 1024**6),
-            zettabytes     => :(re => /^(zettabytes?|zi?b)$/in, factor => 1024**7),
-            yottabytes     => :(re => /^(yottabytes?|yi?b)$/in, factor => 1024**8),
+        information   => :( # all relative to 1 bit
+            bits           => :(re => /^(bits?)$/in,          factor => 1),
+            bytes          => :(re => /^(bytes?)$/in,         factor => 8),
+
+            kilobits      => :(re => /^(kilobits?|Kbits?)$/in,  factor => 1000**1),
+            megabits      => :(re => /^(megabits?|Mbits?)$/in,  factor => 1000**2),
+            gigabits      => :(re => /^(gigabits?|Gbits?)$/in,  factor => 1000**3),
+            terabits      => :(re => /^(terabits?|Tbits?)$/in,  factor => 1000**4),
+            petabits      => :(re => /^(petabits?|Pbits?)$/in,  factor => 1000**5),
+            exabits       => :(re => /^(exabits?|Ebits?)$/in,   factor => 1000**6),
+            zettabits     => :(re => /^(zettabits?|Zbits?)$/in, factor => 1000**7),
+            yottabits     => :(re => /^(yottabits?|Ybits?)$/in, factor => 1000**8),
+
+            kibibits      => :(re => /^(kibibits?|Kibits?)$/in, factor => 1024**1),
+            mebibits      => :(re => /^(mebibits?|Mibits?)$/in, factor => 1024**2),
+            gibibits      => :(re => /^(gibibits?|Gibits?)$/in, factor => 1024**3),
+            tebibits      => :(re => /^(tebibits?|Tibits?)$/in, factor => 1024**4),
+            pebibits      => :(re => /^(pebibits?|Pibits?)$/in, factor => 1024**5),
+            exbibits      => :(re => /^(exbibits?|Eibits?)$/in, factor => 1024**6),
+            zebibits      => :(re => /^(zebibits?|Zibits?)$/in, factor => 1024**7),
+            yobibits      => :(re => /^(yobibits?|Yibits?)$/in, factor => 1024**8),
+
+            kilobytes      => :(re => /^(kilobytes?|kb)$/in,    factor => 8 * 1000**1),
+            megabytes      => :(re => /^(megabytes?|mb)$/in,    factor => 8 * 1000**2),
+            gigabytes      => :(re => /^(gigabytes?|gb)$/in,    factor => 8 * 1000**3),
+            terabytes      => :(re => /^(terabytes?|tb)$/in,    factor => 8 * 1000**4),
+            petabytes      => :(re => /^(petabytes?|pb)$/in,    factor => 8 * 1000**5),
+            exabytes       => :(re => /^(exabytes?|eb)$/in,     factor => 8 * 1000**6),
+            zettabytes     => :(re => /^(zettabytes?|zb)$/in,   factor => 8 * 1000**7),
+            yottabytes     => :(re => /^(yottabytes?|yb)$/in,   factor => 8 * 1000**8),
+
+            kibibytes      => :(re => /^(kibibytes?|kib)$/in,   factor => 8 * 1024**1),
+            mebibytes      => :(re => /^(mebibytes?|mib)$/in,   factor => 8 * 1024**2),
+            gibibytes      => :(re => /^(gibibytes?|gib)$/in,   factor => 8 * 1024**3),
+            tebibytes      => :(re => /^(tebibytes?|tib)$/in,   factor => 8 * 1024**4),
+            pebibytes      => :(re => /^(pebibytes?|pib)$/in,   factor => 8 * 1024**5),
+            exbibytes      => :(re => /^(exbibytes?|eib)$/in,   factor => 8 * 1024**6),
+            zebibytes      => :(re => /^(zebibytes?|zib)$/in,   factor => 8 * 1024**7),
+            yobibytes      => :(re => /^(yobibytes?|yib)$/in,   factor => 8 * 1024**8),
         ),
         plane_angle => :(   # all relative to 1 radian
             radian  =>  :(re => /^(rad(ians?)?)$/in,   factor => 1),
@@ -235,8 +263,6 @@ if (cmd.is_empty && STDIN.is_on_tty) {
     interactive = true
 }
 
-var units = Units()
-
 func round_result (value, precision) {
     value.is_int ? value : value.round(-precision)
 }
@@ -269,6 +295,8 @@ func process_input (command) {
         else {
             amount = Number(amount)
         }
+
+        var units = Units()
 
         var m1 = (from =~ %r{(.+?)/(.+)})
         var m2 = (to   =~ %r{(.+?)/(.+)})
