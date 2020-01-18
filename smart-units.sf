@@ -15,7 +15,7 @@
 # Get the Sidef programming language from:
 #   https://github.com/trizen/sidef
 
-define VERSION = 0.09
+define VERSION = 0.11
 
 func more_help {
     print <<"HELP"
