@@ -18,7 +18,7 @@
 define VERSION = 0.11
 
 func more_help {
-    print <<"HELP"
+    <<"HELP"
 Mass:
     42 kg to lbs        : convert kilograms to pounds
     30 t to grams       : convert tonnes to grams
@@ -63,7 +63,8 @@ HELP
 }
 
 class Units {
-    static conversions = :(
+
+    has conversions = :(
         mass => :(  # all relative to 1 kilogram
             nanograms    => :(re => /^(ng|nanograms?)$/in,          factor => 1e-12),
             micrograms   => :(re => /^(μg|micrograms?)$/in,         factor => 1e-9),
@@ -87,7 +88,7 @@ class Units {
             hectolitres  => :(re => /^(hl|hectolit(re|er)s?)$/in,   factor => 1e2),
             kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,    factor => 1e3),
 
-            pounds       => :(re => /^(pounds?|lbs)$/in,            factor => 0.45359237),
+            pounds       => :(re => /^(pounds?|lbs?)$/in,           factor => 0.45359237),
             stones       => :(re => /^(stones?|st)$/in,             factor => 6.35029318),
             gallons      => :(re => /^(gall?ons?|gall?s?)$/in,      factor => 3.78541),
         ),
@@ -225,7 +226,7 @@ var precision = 10
 var interactive = false
 
 func help {
-    print <<"USAGE"
+    <<"USAGE"
 usage: #{File.new(__FILE__).basename} [text]
 
 options:
@@ -238,29 +239,6 @@ examples:
     whats the equivalent of 21 inches in meters
     what is the speed of light in miles per hour
 USAGE
-    Sys.exit(0)
-}
-
-var cmd = [];
-while (!ARGV.is_empty) {
-    given (var arg = ARGV.shift) {
-        when ('-p') {
-            precision = Num(ARGV.shift)
-        }
-        when ('-i') {
-            interactive = true
-        }
-        when ('-h') {
-            help()
-        }
-        default {
-            cmd << arg
-        }
-    }
-}
-
-if (cmd.is_empty && STDIN.is_on_tty) {
-    interactive = true
 }
 
 func round_result (value, precision) {
@@ -268,6 +246,9 @@ func round_result (value, precision) {
 }
 
 func process_input (command) {
+
+    static units = Units()
+
     var match = command.match(/^\s*
 
         # command or question
@@ -296,8 +277,6 @@ func process_input (command) {
             amount = Number(amount)
         }
 
-        var units = Units()
-
         var m1 = (from =~ %r{(.+?)/(.+)})
         var m2 = (to   =~ %r{(.+?)/(.+)})
 
@@ -318,46 +297,85 @@ func process_input (command) {
             var time1 = time_aliases.fetch(m1[1].lc, m1[1])
             var time2 = time_aliases.fetch(m2[1].lc, m2[1])
 
-            var r1 = units.convert(amount, len1,  len2)
-            var r2 = units.convert(amount, time1, time2)
+            var r1 = units.convert(1, len1,  len2)
+            var r2 = units.convert(1, time1, time2)
 
             if (defined(r1) && defined(r2)) {
-                say round_result(amount * r1/r2, precision)
-                return true
+                return round_result(amount * r1/r2, precision)
             }
         }
 
         with (units.convert(amount, from, to)) { |r|
-            say round_result(r, precision)
-            return true
+            return round_result(r, precision)
         }
     }
     else {
-
-        if (command =~ /help/i) {
-            return more_help()
-        }
-
-        say (try { eval(command) } \\ "...")
+        return try { eval(command) }
     }
 
-    return false
+    return nil
 }
 
-if (interactive) {
-    print <<"EOT"
-Welcome to smart-units #{VERSION} in interactive mode.
-EOT
-    loop {
-        var line = read(">> ", String) \\ break
+if (__FILE__ == __MAIN__) {
 
-        if (line ~~ ['q', 'exit']) {
-            break
+    var cmd = []
+
+    while (ARGV) {
+        given (var arg = ARGV.shift) {
+            when ('-p') {
+                precision = Num(ARGV.shift)
+            }
+            when ('-i') {
+                interactive = true
+            }
+            when ('-h') {
+                print help()
+                Sys.exit(0)
+            }
+            when ('-v') {
+                say "smart-units #{VERSION}"
+                Sys.exit(0)
+            }
+            default {
+                cmd << arg
+            }
         }
-
-        process_input(line)
     }
-}
-else {
-    Sys.exit((cmd.is_empty ? help() : process_input(cmd.join(' '))) ? 0 : 1)
+
+    if (cmd.is_empty && STDIN.is_on_tty) {
+        interactive = true
+    }
+
+    if (interactive) {
+        print <<-"EOT"
+        Welcome to smart-units #{VERSION} in interactive mode.
+        EOT
+        loop {
+            var line = read(">> ", String) \\ break
+
+            if (line ~~ ['q', 'exit']) {
+                break
+            }
+
+            if (line =~ /help/i) {
+                print more_help()
+                next
+            }
+
+            line =~ /\S/ || next
+
+            with (process_input(line)) {|r|
+                say r
+            }
+        }
+    }
+    else {
+        cmd || do { print help(); Sys.exit(1) }
+        with (process_input(cmd.join(' '))) { |r|
+            say r
+        }
+        else {
+            Sys.exit(1)
+        }
+    }
 }
