@@ -203,8 +203,8 @@ class Units {
             inches_of_mercury      => :(re => /^((inch(es)?|in)\s+of\s+(mercury|Hg)|inHg)$/in,         factor => 3386.389),
             inches_of_water        => :(re => /^((inch(es)?|in)\s+of\s+(water|H2O)|inH2O)$/in,         factor => 249.082),
 
-            pound_per_square_foot   => :(re => /^((pound|lbs)\s*(per|\/)\s*(ft|feet|foot)\^2|psf)$/in,                       factor => 47.88026),
-            pound_per_square_inch   => :(re => /^((pound|lbs)\s*(per|\/)\s*(inch(es)?|in)\^2|psi)$/in,                       factor => 6894.757),
+            pound_per_square_foot   => :(re => /^((pound|lbs?)\s*(per|\/)\s*(ft|feet|foot)\^2|psf)$/in,                      factor => 47.88026),
+            pound_per_square_inch   => :(re => /^((pound|lbs?)\s*(per|\/)\s*(inch(es)?|in)\^2|psi)$/in,                      factor => 6894.757),
             poundal_per_square_foot => :(re => /^((poundal|pdl)\s*(per|\/)\s*(ft|feet|foot)\^2|pdl\s*\/\s*sq\s*ft)$/in,      factor => 1.488164),
 
             micrometres_of_mercury  => :(re => /^((micro\s?m(et(re|er))?|[μu]m)\s+of\s+(mercury|Hg)|[μu]mHg)$/in, factor => 0.133322387415),
