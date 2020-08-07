@@ -7,13 +7,16 @@
 # Author: Daniel "Trizen" Șuteu
 # License: GPLv3
 # Date: 17 May 2014
-# Edit: 18 January 2020
+# Edit: 07 August 2020
 # https://github.com/trizen/smart-units
 
 # A pretty clever command-line units converter (written in Sidef).
 
 # Get the Sidef programming language from:
 #   https://github.com/trizen/sidef
+
+# Reference:
+#   https://en.wikipedia.org/wiki/Conversion_of_units
 
 define VERSION = 0.11
 
@@ -32,7 +35,17 @@ Temperature:
 Length:
     21.1 in to cm       : convert inches to centimetres
     5.6 feet to m       : convert feet to meters
-    4 light years to km : convert light years to km
+    4 light years in km : convert light years in km
+
+Area:
+    1/2 Ha to yd^2      : convert hectares to square yards
+    2.5 mi^2 to acres   : convert square miles to acres
+    29 ft^2 to m^2      : convert squre feet to square meters
+
+Pressure:
+    300 Pa in atm       : convert Pascal to atmospheres
+    1 mmHg in bars      : convert mm of Mercury to bars
+    15 psi to ftH2O     : convert pounds/in^2 to feet of water
 
 Velocity:
     4444 mi/h to km/s   : convert miles per hour to km/s
@@ -42,6 +55,7 @@ Velocity:
 Plane angle:
     2 rad in deg        : convert radians to degrees
     90 deg in rad       : convert degrees to radians
+    10 arcsec in grad   : convert arc seconds to gradians
 
 Frequency:
     30 MHz to Hz        : convert megahertz to hertz
@@ -65,84 +79,217 @@ HELP
 class Units {
 
     has conversions = :(
+
         mass => :(  # all relative to 1 kilogram
-            nanograms    => :(re => /^(ng|nanograms?)$/in,          factor => 1e-12),
-            micrograms   => :(re => /^(μg|micrograms?)$/in,         factor => 1e-9),
-            milligrams   => :(re => /^(mg|mill?igrams?)$/in,        factor => 1e-6),
-            centigrams   => :(re => /^(cg|centigrams?)$/in,         factor => 1e-5),
-            decigrams    => :(re => /^(dg|decigrams?)$/in,          factor => 1e-4),
-            grams        => :(re => /^(grams?|gr)$/in,              factor => 1e-3),
-            decagrams    => :(re => /^(dag|decagrams?)$/in,         factor => 1e-2),
-            hectograms   => :(re => /^(hg|hectograms?)$/in,         factor => 1e-1),
-            kilograms    => :(re => /^(kg|kilograms?)$/in,          factor => 1),
-            quintals     => :(re => /^(quintals?)$/in,              factor => 1e2),
-            tonnes       => :(re => /^(tonn?es?|(?-i:t))$/in,       factor => 1e3),
+            nanograms    => :(re => /^(ng|nanograms?)$/in,              factor => 1e-12),
+            micrograms   => :(re => /^(μg|micrograms?)$/in,             factor => 1e-9),
+            milligrams   => :(re => /^(mg|mill?igrams?)$/in,            factor => 1e-6),
+            centigrams   => :(re => /^(cg|centigrams?)$/in,             factor => 1e-5),
+            decigrams    => :(re => /^(dg|decigrams?)$/in,              factor => 1e-4),
+            grams        => :(re => /^(grams?|gr?)$/in,                 factor => 1e-3),
+            decagrams    => :(re => /^(dag|decagrams?)$/in,             factor => 1e-2),
+            hectograms   => :(re => /^(hg|hectograms?)$/in,             factor => 1e-1),
+            kilograms    => :(re => /^(kg|kilograms?)$/in,              factor => 1),
+            quintals     => :(re => /^(quintals?)$/in,                  factor => 1e2),
+            tonnes       => :(re => /^(tonn?es?|(?-i:t))$/in,           factor => 1e3),
 
-            nanolitres   => :(re => /^(nl|nanolit(re|er)s?)$/in,    factor => 1e-9),
-            microlitres  => :(re => /^(μl|microlit(re|er)s?)$/in,   factor => 1e-6),
-            millilitres  => :(re => /^(ml|mill?ilit(re|er)s?)$/in,  factor => 1e-3),
-            centilitres  => :(re => /^(cl|centilit(re|er)s?)$/in,   factor => 1e-2),
-            decilitres   => :(re => /^(dl|decilit(re|er)s?)$/in,    factor => 1e-1),
-            litres       => :(re => /^(l|lit(re|er)s?)$/in,         factor => 1),
-            decalitres   => :(re => /^(dal|decalit(re|er)s?)$/in,   factor => 1e1),
-            hectolitres  => :(re => /^(hl|hectolit(re|er)s?)$/in,   factor => 1e2),
-            kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,    factor => 1e3),
+            nanolitres   => :(re => /^(nl|nanolit(re|er)s?)$/in,        factor => 1e-9),
+            microlitres  => :(re => /^(μl|microlit(re|er)s?)$/in,       factor => 1e-6),
+            millilitres  => :(re => /^(ml|mill?ilit(re|er)s?)$/in,      factor => 1e-3),
+            centilitres  => :(re => /^(cl|centilit(re|er)s?)$/in,       factor => 1e-2),
+            decilitres   => :(re => /^(dl|decilit(re|er)s?)$/in,        factor => 1e-1),
+            litres       => :(re => /^(l|lit(re|er)s?)$/in,             factor => 1),
+            decalitres   => :(re => /^(dal|decalit(re|er)s?)$/in,       factor => 1e1),
+            hectolitres  => :(re => /^(hl|hectolit(re|er)s?)$/in,       factor => 1e2),
+            kilolitres   => :(re => /^(kl|kilolit(re|er)s?)$/in,        factor => 1e3),
 
-            pounds       => :(re => /^(pounds?|lbs?)$/in,           factor => 0.45359237),
-            stones       => :(re => /^(stones?|st)$/in,             factor => 6.35029318),
-            gallons      => :(re => /^(gall?ons?|gall?s?)$/in,      factor => 3.78541),
+            pounds       => :(re => /^(pounds?|lbs?)$/in,               factor => 0.45359237),
+            stones       => :(re => /^(stones?|st)$/in,                 factor => 6.35029318),
+            gallons      => :(re => /^(gall?ons?|gall?s?)$/in,          factor => 3.78541),
+            ounces       => :(re => /^(ou?nces?|oz)$/in,                factor => 0.0283495231),
+            fluid_ounces => :(re => /^fl(uid)? (ou?nces?|oz)$/in,       factor => 0.0295735296),
+
+            gamma        => :(re => /^(gamma|(?-i:γ))/in,               factor => 1e-9),
+            electronvolt => :(re => /^(eV|electron\s*?volts?)/in,       factor => 1.78266184 * 1e-36),
+
+            grain        => :(re => /^(grains?)/in,                     factor => 0.0000647989),
+            kip          => :(re => /^(kips?)$/in,                      factor => 453.59237),
+            mark         => :(re => /^(marks?)$/in,                     factor => 0.2488278144),
+            pennyweight  => :(re => /^(penny\s*?weights?|dwt|pwt)$/in,  factor => 0.00155517384),
+            point        => :(re => /^(points?)$/in,                    factor => 0.000002),
+            carat        => :(re => /^(carats?|ct)$/in,                 factor => 0.0002),
+            scruple      => :(re => /^(scruple)$/in,                    factor => 0.0012959782),
+            sheet        => :(re => /^(sheets?)$/in,                    factor => 0.0006479891),
+            slug         => :(re => /^(slugs?)$/in,                     factor => 14.593903),
         ),
+
         temperature => :(   # using Celsius as the standard
             celsius    => :(re => /^(celsius|(?-i:C))$/in,    code => {|n, _| n} ),
             kelvin     => :(re => /^(kelvin|(?-i:K))$/in,     code => {|n, to| to ? (n + 273.15) : (-273.15 + n)} ),
             fahrenheit => :(re => /^(fahrenheit|(?-i:F))$/in, code => {|n, to| to ? (32 + n*9/5) : ((n - 32) * 5/9)} ),
             rankine    => :(re => /^(rankine|(?-i:R))$/in,    code => {|n, to| to ? ((n + 273.15) * 9/5) : (n*5/9 - 273.15)} ),
         ),
+
         time => :(  # all relative to 1 second
+            svedbergs    => :(re => /^(svedbergs?|(?-i:S))/in,           factor => 1e-13),
             nanoseconds  => :(re => /^(nanosec(ond)?s?|(?-i:ns))/in,     factor => 1e-9),
+            shake        => :(re => /^(shake)$/in,                       factor => 1e-8),
             microseconds => :(re => /^(microsec(ond)?s?|(?-i:us))/in,    factor => 1e-6),
             milliseconds => :(re => /^(mill?isec(ond)?s?|(?-i:ms))$/in,  factor => 1e-3),
             seconds      => :(re => /^(sec(ond)?s?|(?-i:s))$/in,         factor => 1),
             minutes      => :(re => /^(min(ute)?s?)$/in,                 factor => 60),
             moments      => :(re => /^(mom(ent)?s?)$/in,                 factor => 90),
-            hours        => :(re => /^(hours?)$/in,                      factor => 3600),
-            days         => :(re => /^(days?)$/in,                       factor => 86400),
+            hours        => :(re => /^(hours?|(?-i:h))$/in,              factor => 3600),
+            days         => :(re => /^(days?|(?-i:d))$/in,               factor => 86400),
             millidays    => :(re => /^(millidays?|(?-i:md))$/in,         factor => 86.4),
-            weeks        => :(re => /^(weeks?)$/in,                      factor => 604800),
-            months       => :(re => /^(mon(th)?s?)$/in,                  factor => 2629743.83),
+            weeks        => :(re => /^(weeks?|(?-i:wk))$/in,             factor => 604800),
+            fortnights   => :(re => /^(fortnights?|(?-i:fn))$/in,        factor => 1209600),
+            months       => :(re => /^(mon(th)?s?|(?-i:mo))$/in,         factor => 2629743.83),
             years        => :(re => /^(years?)$/in,                      factor => 31556952),
+            decades      => :(re => /^(decades?|(?-i:decs?))$/in,        factor => 315569520),
+            centuries    => :(re => /^(centur(y|ies)?|(?-i:c))$/in,      factor => 3155695200),
+            heleks       => :(re => /^(heleks?)$/in,                     factor => 10/3),
+            planck_time  => :(re => /^(plank\s*time)$/in,                factor => (5.39116 * 1e-44)),
         ),
+
         velocity    => :( # all relative to 1 meter / second
+
             meters_per_second     => :(re => /^ m(et(er|re)s?)? (\/|\s+per\s+) s(ec(ond)?)? $/inx,                    factor => 1),
             miles_per_hour        => :(re => /^ ( mph | mi(les?)? (\/|\s+per\s+) h(our)? ) $/inx,                     factor => 0.44704),
             miles_per_minute      => :(re => /^ ( mpm | mi(les?)? (\/|\s+per\s+) m(in(ute)?)? )$/inx,                 factor => 26.8224),
             miles_per_second      => :(re => /^ ( mps | mi(les?)? (\/|\s+per\s+) s(ec(ond)?)? )$/inx,                 factor => 1609.344),
-            kilometers_per_hour   => :(re => /^ ( km?ph | k(ilo)?m(et(er|re)s?)? (\/|\s+per\s+) h(our)? )$/inx,       factor => 1/3.6),
             metres_per_hour       => :(re => /^ ( m(et(er|re)s?)? (\/|\s+per\s+) h(our)? ) $/inx,                     factor => 1/3600),
+
+            kilometers_per_hour   => :(re => /^ ( km?ph | k(ilo)?m(et(er|re)s?)? (\/|\s+per\s+) h(our)? )$/inx,       factor => 1/3.6),
             kilometers_per_second => :(re => /^ ( km?ps | k(ilo)?m(et(er|re)s?)? (\/|\s+per\s+) s(ec(ond)?)? ) $/inx, factor => 1e3),
+
             speed_of_light        => :(re => /^ ( speed \s+ of \s+ light | (?-i:c) ) $/inx,                           factor => 299792458),
-            speed_of_sound        => :(re => /^ ( speed \s+ of \s+ sound ) $/inx,                                     factor => 340.29),
+            speed_of_sound        => :(re => /^ ( speed \s+ of \s+ sound | (?-i:s) ) $/inx,                           factor => 340.29),
+
+            feet_per_hour           => :(re => /^((foot|feet|ft)\s*(per|\/)\s*(hour|h)|fph)$/in,        factor => 60959947/720000000000),
+            feet_per_minute         => :(re => /^((foot|feet|ft)\s*(per|\/)\s*(min(ute)?|m)|fpm)$/in,   factor => 60959947/12000000000),
+            feet_per_second         => :(re => /^((foot|feet|ft)\s*(per|\/)\s*(sec(ond)?|s)|fps)$/in,   factor => 0.304799735),
+
+            furlongs_per_fortnight  => :(re => /^(furlong\s*(per|\/)\s*fortnight)$/in,                  factor => 1397/8400000),
+
+            inches_per_hour         => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(hour|h)|iph)$/in,        factor => 127/18000000),
+            inches_per_minute       => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(min(ute)?|m)|ipm)$/in,   factor => 127/300000),
+            inches_per_second       => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(sec(ond)?|s)|ips)$/in,   factor => 0.0254),
+            knots                   => :(re => /^(knots?|kn)$/in,                                       factor => 463/900),
         ),
+
+        pressure    => :(   # all relative to 1 Pascal
+
+            atmospheres    => :(re => /^(atmospheres?|atm)$/in,                          factor => 101325),
+            pièze          => :(re => /^(pi[eè]ze|pz)$/in,                               factor => 1e3),
+            millibars      => :(re => /^(mil?libars?)$/in,                               factor => 1e2),
+            bars           => :(re => /^(bars?)$/in,                                     factor => 1e5),
+            barye          => :(re => /^(baryes?)$/in,                                   factor => 0.1),
+            pascals        => :(re => /^(pascals?|Pa)$/in,                               factor => 1),
+            hectopascals   => :(re => /^(hectopascals?|hPa)$/in,                         factor => 1e2),
+            kilopascals    => :(re => /^(kilopascals?|kPa)$/in,                          factor => 1e3),
+            gigapascals    => :(re => /^(gigapascals?|GPa)$/in,                          factor => 1e9),
+            torr           => :(re => /^(torrs?)$/in,                                    factor => 133.322387415),
+
+            centimetre_of_mercury  => :(re => /^((centimet(re|er)s?|cm)\s+of\s+(mercury|Hg)|cmHg)$/in, factor => 1333.22387415),
+            centimetre_of_water    => :(re => /^((centimet(re|er)s?|cm)\s+of\s+(water|H2O)|cmH2O)$/in, factor => 98.0638),
+
+            metre_of_mercury       => :(re => /^((met(re|er)s?|m)\s+of\s+(mercury|Hg)|mHg)$/in, factor => 133322),
+            metre_of_water         => :(re => /^((met(re|er)s?|m)\s+of\s+(water|H2O)|mH2O)$/in, factor => 9806.38),
+
+            feet_of_mercury        => :(re => /^((foot|feet|ft)\s+of\s+(mercury|Hg)|ftHg)$/in,         factor => 40636.66),
+            feet_of_water          => :(re => /^((foot|feet|ft)\s+of\s+(water|H2O)|ftH2O)$/in,         factor => 2988.98),
+
+            inches_of_mercury      => :(re => /^((inch(es)?|in)\s+of\s+(mercury|Hg)|inHg)$/in,         factor => 3386.389),
+            inches_of_water        => :(re => /^((inch(es)?|in)\s+of\s+(water|H2O)|inH2O)$/in,         factor => 249.082),
+
+            pound_per_square_foot   => :(re => /^((pound|lbs)\s*(per|\/)\s*(ft|feet|foot)\^2|psf)$/in,                       factor => 47.88026),
+            pound_per_square_inch   => :(re => /^((pound|lbs)\s*(per|\/)\s*(inch(es)?|in)\^2|psi)$/in,                       factor => 6894.757),
+            poundal_per_square_foot => :(re => /^((poundal|pdl)\s*(per|\/)\s*(ft|feet|foot)\^2|pdl\s*\/\s*sq\s*ft)$/in,      factor => 1.488164),
+
+            micrometres_of_mercury  => :(re => /^((micro\s?m(et(re|er))?|μm)\s+of\s+(mercury|Hg)|μmHg)$/in,   factor => 0.133322387415),
+            millimetres_of_mercury  => :(re => /^((mill?i\s?m(et(re|er))?|mm)\s+of\s+(mercury|Hg)|mmHg)$/in,  factor => 133.322387415),
+            millimetres_of_water    => :(re => /^((mill?i\s?m(et(re|er))?|mm)\s+of\s+(water|H2O)|inH2O)$/in,  factor => 9.80638),
+        ),
+
+        area        => :(   # all relative to a square meter (1 m^2)
+
+            acres     => :(re => /^(acres?|(?-i:ac))$/in,           factor => 4046.8564224),
+            ares      => :(re => /^(ares?|(?-i:a))$/in,             factor => 1e2),
+            barns     => :(re => /^(barns?|(?-i:b))$/in,            factor => 1e-28),
+            barony    => :(re => /^(barony)$/in,                    factor => 16187425.6896),
+            boards    => :(re => /^(baords?|(?-i:bd))$/in,          factor => 0.00774192),
+            cords     => :(re => /^(cords?)$/in,                    factor => 1.48644864),
+            cuerda    => :(re => /^(cuerdas?)$/in,                  factor => 3930.395625),
+            dunam     => :(re => /^(dunams?)$/in,                   factor => 1e3),
+            guntha    => :(re => /^(gunth?as?)$/in,                 factor => 101.17),
+            hectares  => :(re => /^(hectares?|ha)$/in,              factor => 1e4),
+            rood      => :(re => /^(roods?|ro)$/in,                 factor => 1011.7141056),
+            ping      => :(re => /^(pings?)$/in,                    factor => 3.306),
+            sections  => :(re => /^(sections?)$/in,                 factor => 2589988.110336),
+            shed      => :(re => /^(sheds?)$/in,                    factor => 1e-52),
+            stremma   => :(re => /^(stremmas?)$/in,                 factor => 1e3),
+            townships => :(re => /^(townships?)$/in,                factor => 93239944.92),
+            yardlands => :(re => /^(yardlands?)$/in,                factor => 120000),
+
+            square_chains       => :(re => /^(sq(uare)?\s*(chains?|ch)|ch\^2)$/in,               factor => 404.68564224),
+            square_feet         => :(re => /^(sq(uare)?\s*(feets?|foots?|ft)|ft\^2)$/in,         factor => 0.09290304),
+            square_inches       => :(re => /^(sq(uare)?\s*(inch(es)?|in)|in\^2)$/in,             factor => 0.00064516),
+            square_metres       => :(re => /^(sq(uare)?\s*(met(er|re)s?|m)|m\^2)$/in,            factor => 1),
+            square_kilometres   => :(re => /^(sq(uare)?\s*(kilomet(er|re)s?|km)|km\^2)$/in,      factor => 1e6),
+            square_miles        => :(re => /^(sq(uare)?\s*(miles?|mi)|mi\^2)$/in,                factor => 2589988.110336),
+            square_yards        => :(re => /^(sq(uare)?\s*(yards?|yd)|yd\^2)$/in,                factor => 0.83612736),
+        ),
+
         length      => :(   # all relative to 1 meter
-            kilometers       => :(re => /^k(ilo)?m(et(er|re)s?)?$/in,      factor => 1e3),
-            meters           => :(re => /^m(et(er|re)s?)?$/in,             factor => 1),
-            centimetres      => :(re => /^(centimet(er|re)s?|cm)$/in,      factor => 1e-2),
-            millimetres      => :(re => /^(millimet(er|re)s?|mm)$/in,      factor => 1e-3),
-            micrometres      => :(re => /^(micromet(er|re)s?|um)$/in,      factor => 1e-6),
-            nanometres       => :(re => /^(nanomet(er|re)s?|nm)$/in,       factor => 1e-9),
-            picometres       => :(re => /^(picomet(er|re)s?|pm)$/in,       factor => 1e-12),
-            femtometres      => :(re => /^(femtomet(er|re)s?|fm)$/in,      factor => 1e-15),
-            feet             => :(re => /^(feet|ft|foot)$/in,              factor => 0.304799735),
-            inches           => :(re => /^(inch(es)?|in|")$/in,            factor => 0.0254),
-            miles            => :(re => /^(miles?|mi)$/in,                 factor => 1609.344),
-            yards            => :(re => /^(yards?|yd)$/in,                 factor => 0.9144),
-            astronomic_units => :(re => /^(astronomic[-\s]*units?|AU)$/in, factor => 149597870700),
-            light_seconds    => :(re => /^(light[-\s]*sec(ond)?s?|ls)$/in, factor => 299792458),
-            light_minutes    => :(re => /^(light[-\s]*min(ute)?s?|lm)$/in, factor => 1.798754748e10),
-            light_hours      => :(re => /^(light[-\s]*hours?|lh)$/in,      factor => 1.0792528488e12),
-            light_days       => :(re => /^(light[-\s]*days?|ld)$/in,       factor => 2.59020683712e13),
-            light_years      => :(re => /^(light[-\s]*years?|ly)$/in,      factor => 9.4607304725808e15),
+
+            kilometers       => :(re => /^k(ilo)?m(et(er|re)s?)?$/in,       factor => 1e3),
+            meters           => :(re => /^m(et(er|re)s?)?$/in,              factor => 1),
+            centimetres      => :(re => /^(centimet(er|re)s?|cm)$/in,       factor => 1e-2),
+            millimetres      => :(re => /^(millimet(er|re)s?|mm)$/in,       factor => 1e-3),
+            micrometres      => :(re => /^(micromet(er|re)s?|um)$/in,       factor => 1e-6),
+            nanometres       => :(re => /^(nanomet(er|re)s?|nm)$/in,        factor => 1e-9),
+            ångströms        => :(re => /^(ångströms?|angstroms?|Å)$/in,    factor => 1e-10),
+            picometres       => :(re => /^(picomet(er|re)s?|pm)$/in,        factor => 1e-12),
+            femtometres      => :(re => /^(femtomet(er|re)s?|fm|fermi)$/in, factor => 1e-15),
+            attometres       => :(re => /^(attomet(er|re)s?|am)$/in,        factor => 1e-18),
+            zeptometres      => :(re => /^(zeptomet(er|re)s?|zm)$/in,       factor => 1e-21),
+            yoctometres      => :(re => /^(yoctomet(er|re)s?|ym)$/in,       factor => 1e-24),
+
+            feet             => :(re => /^(feets?|ft|foots?)$/in,    factor => 0.304799735),
+            inches           => :(re => /^(inch(es)?|in|")$/in,      factor => 0.0254),
+            miles            => :(re => /^(miles?|mi)$/in,           factor => 1609.344),
+            yards            => :(re => /^(yards?|yd)$/in,           factor => 0.9144),
+
+            astronomical_units => :(re => /^(astronomic(al)?[-\s]*units?|(?-i:AU))$/in, factor => 149597870700),
+            parsecs            => :(re => /^(parsecs?|(?-i:pc))/in,                     factor => 30856775814913672.789),
+
+            light_seconds      => :(re => /^(light[-\s]*sec(ond)?s?|ls)$/in,      factor => 299792458),
+            light_minutes      => :(re => /^(light[-\s]*min(ute)?s?|lm)$/in,      factor => 1.798754748e10),
+            light_hours        => :(re => /^(light[-\s]*hours?|lh)$/in,           factor => 1.0792528488e12),
+            light_days         => :(re => /^(light[-\s]*days?|ld)$/in,            factor => 2.59020683712e13),
+            light_years        => :(re => /^(light[-\s]*years?|ly)$/in,           factor => 9.4607304725808e15),
+
+            ells                => :(re => /^(ells?)$/in,                factor => 1.143),
+            fingers             => :(re => /^(fingers?)$/in,             factor => 0.022225),
+            hands               => :(re => /^(hands?)$/in,               factor => 0.1016),
+            palms               => :(re => /^(palms?)$/in,               factor => 0.0762),
+
+            cable_lengths       => :(re => /^(cable(\s*length)?s?)$/in,  factor => 185.2),
+            chains              => :(re => /^(chains?)$/in,              factor => 20.11684),
+            cubits              => :(re => /^(cubits?)$/in,              factor => 0.5),
+            fathoms             => :(re => /^(fathoms?)$/in,             factor => 1.8288),
+            furlongs            => :(re => /^(furlongs?|fur)$/in,        factor => 201.168),
+            league              => :(re => /^(league?|lea)$/in,          factor => 4828),
+            lines               => :(re => /^(lines?)$/in,               factor => 127/60000),
+            rods                => :(re => /^(rods?|rd)$/in,             factor => 5.0292),
+            ropes               => :(re => /^(ropes?)$/in,               factor => 6.096),
+            shaku               => :(re => /^(shaku)$/in,                factor => 10/33),
+            spans               => :(re => /^(spans?)$/in,               factor => 0.2286),
+            sticks              => :(re => /^(sticks?)$/in,              factor => 0.0508),
+            twips               => :(re => /^(twips?|twp)$/in,           factor => 127/7200000),
         ),
+
         information   => :( # all relative to 1 bit
             bits           => :(re => /^(bits?)$/in,          factor => 1),
             bytes          => :(re => /^(bytes?)$/in,         factor => 8),
@@ -183,19 +330,41 @@ class Units {
             zebibytes      => :(re => /^(zebibytes?|zib)$/in,   factor => 8 * 1024**7),
             yobibytes      => :(re => /^(yobibytes?|yib)$/in,   factor => 8 * 1024**8),
         ),
+
         plane_angle => :(   # all relative to 1 radian
-            radian  =>  :(re => /^(rad(ians?)?)$/in,   factor => 1),
-            degree  =>  :(re => /^(deg(rees?)?)$/in,   factor => Num.pi/180),
+
+            radian      =>  :(re => /^(rad(ian)?s?)$/in,             factor => 1),
+            milliradian =>  :(re => /^(mill?irad(ian)?s?|mrad)$/in,  factor => 1/1000),
+            degree      =>  :(re => /^(deg(ree)?s?)$/in,             factor => Num.pi/180),
+            quadrant    =>  :(re => /^(quadrants?)$/in,              factor => Num.pi/2),
+            sextant     =>  :(re => /^(sextants?)$/in,               factor => Num.pi/3),
+            octant      =>  :(re => /^(octants?)$/in,                factor => Num.pi/4),
+            sign        =>  :(re => /^(signs?)$/in,                  factor => Num.pi/6),
+            grad        =>  :(re => /^(grads?)$/in,                  factor => Num.pi/200),
+
+            arcseconds  =>  :(re => /^(arcsec(ond)?s?)$/in,     factor => Num.pi/648000),
+            arcminutes  =>  :(re => /^(arcmin(ute)?s?)$/in,     factor => Num.pi/10800),
         ),
+
         frequency => :(     # all relative to 1 hertz
-            hertz     => :(re => /^(hertz|hz)$/in,         factor => 1),
+
+            hertz     => :(re => /^(hertz|hz|cps)$/in,     factor => 1),
             kilohertz => :(re => /^(kiloherz|khz)$/in,     factor => 1e3),
             megahertz => :(re => /^(megahertz|mhz)$/in,    factor => 1e6),
             gigahertz => :(re => /^(gigahertz|ghz)$/in,    factor => 1e9),
+
+            degree_per_second   => :(re => /^(degree\s+per\s+second|deg\/s)$/in,    factor => 1/360),
+            actions_per_minute  => :(re => /^(actions\s+per\s+minute|apm)$/in,      factor => 1/60),
+
+            radian_per_second      => :(re => /^(radian\s+per\s+second|rad\/s)$/in,    factor => 1/Num.tau),
+            revolutions_per_minute => :(re => /^(revolutions\s+per\s+minute|rpm)$/in,  factor => Num.tau/60),
         ),
     )
 
     method convert(amount, from, to) {
+
+        var errors = []
+
         conversions.each { |category, value|
             value.each { |from_unit, from_data|
                 if (from.match(from_data{:re})) {
@@ -211,10 +380,16 @@ class Units {
                             return result
                         }
                     }
-                    STDERR.say("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...")
-                    return nil
+                    errors << ("#{category}: I don't know how to convert #{from_unit.gsub('_', ' ')} to #{to}...")
                 }
             }
+        }
+
+        if (errors) {
+            errors.each {|msg|
+                STDERR.say(msg)
+            }
+            return nil
         }
 
         STDERR.say("I don't know how to convert #{from} to #{to}... Is '#{from}' a real unit?")
@@ -251,24 +426,28 @@ func process_input (command) {
 
     var match = command.match(/^\s*
 
+        (?(DEFINE)
+            (?<number>(?:[+-]?[0-9]*(?:\.[0-9]+)?(?:[Ee](?:[+-]?[0-9]+))?))
+        )
+
         # command or question
-        (?:(?:convert|how\s+much\s+is|what(?:\s+is|\W*s)(?:\s+the)?(?:\s+equivalent\s+of)?)\s+)?
+        (?<command>(?:convert|how\s+much\s+is|what(?:\s+is|\W*s)(?:\s+the)?(?:\s+equivalent\s+of)?)\s+)?
 
         # followed by a number or 'a' word or nothing
-        ([-+]?\d+(?:\.\d+)?|(?:an?|one)(?=\s)|)
+        (?<amount>(?&number)(?:\s*\/\s*(?&number))?|(?:an?|one)(?=\s)|)
 
         # unit from (up to 3 words)
-        \s*(\S+(?:\s+\S+){0,2})
+        \s*(?<from_unit>\S+(?:\s+\S+){0,2})
 
         # 'to' token
-        \s+(?:in|to|into|as)\s+
+        \s+(?<separator>in|to|into|as)\s+
 
         # unit to (up to 3 words)
-        (\S+(?:\s+\S+){0,2})
+        (?<to_unit>\S+(?:\s+\S+){0,2})
     \s*$/ix)
 
     if (match) {
-        var (amount, from, to) = match...
+        var (amount, from, to) = match.named_captures(){:amount,:from_unit,:to_unit}
 
         if (amount ~~ ['a','an','one','']) {
             amount = 1
