@@ -18,7 +18,7 @@
 # Reference:
 #   https://en.wikipedia.org/wiki/Conversion_of_units
 
-define VERSION = 0.11
+define VERSION = 0.12
 
 func more_help {
     <<"HELP"
