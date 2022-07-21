@@ -175,7 +175,7 @@ class Units {
             inches_per_hour         => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(hour|h)|iph)$/in,        factor => 127/18000000),
             inches_per_minute       => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(min(ute)?|m)|ipm)$/in,   factor => 127/300000),
             inches_per_second       => :(re => /^((inch(es)?|in)\s*(per|\/)\s*(sec(ond)?|s)|ips)$/in,   factor => 0.0254),
-            knots                   => :(re => /^(knots?|kn)$/in,                                       factor => 463/900),
+            knots                   => :(re => /^(knots?|kn|kts)$/in,                                   factor => 463/900),
         ),
 
         pressure    => :(   # all relative to 1 Pascal
@@ -427,7 +427,7 @@ func process_input (command) {
     var match = command.match(/^\s*
 
         (?(DEFINE)
-            (?<number>(?:[+-]?[0-9]*(?:\.[0-9]+)?(?:[Ee](?:[+-]?[0-9]+))?))
+            (?<number>(?:[+-]?[0-9]*(?:[.,][0-9]+)*(?:[Ee](?:[+-]?[0-9]+))?))
         )
 
         # command or question
@@ -453,6 +453,7 @@ func process_input (command) {
             amount = 1
         }
         else {
+            amount.gsub!(/,/, '')
             amount = Number(amount)
         }
 
