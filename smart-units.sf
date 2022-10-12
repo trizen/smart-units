@@ -108,6 +108,7 @@ class Units {
             gallons      => :(re => /^(gall?ons?|gall?s?)$/in,          factor => 3.78541),
             ounces       => :(re => /^(ou?nces?|oz)$/in,                factor => 0.0283495231),
             fluid_ounces => :(re => /^fl(uid)? (ou?nces?|oz)$/in,       factor => 0.0295735296),
+            cups         => :(re => /^cups?$/in,                        factor => 0.2365882365),
 
             gamma        => :(re => /^(gamma|(?-i:γ))$/in,              factor => 1e-9),
             electronvolt => :(re => /^(eV|electron\s*?volts?)$/in,      factor => 1.78266184 * 1e-36),
