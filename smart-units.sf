@@ -529,7 +529,7 @@ if (__FILE__ == __MAIN__) {
 
     if (interactive) {
         print <<-"EOT"
-        Welcome to smart-units #{VERSION} in interactive mode.
+        Welcome to smart-units #{VERSION.float} in interactive mode.
         EOT
         loop {
             var line = read(">> ", String) \\ break
@@ -546,7 +546,7 @@ if (__FILE__ == __MAIN__) {
             line =~ /\S/ || next
 
             with (process_input(line)) {|r|
-                say r
+                say r.float
             }
         }
     }
