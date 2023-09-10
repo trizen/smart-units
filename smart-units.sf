@@ -546,7 +546,7 @@ if (__FILE__ == __MAIN__) {
             line =~ /\S/ || next
 
             with (process_input(line)) {|r|
-                say r.float
+                try { say r.float } catch { say r }
             }
         }
     }
