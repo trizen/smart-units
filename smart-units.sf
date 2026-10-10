@@ -482,7 +482,7 @@ func process_input (command) {
             var r2 = units.convert(1, time1, time2)
 
             if (defined(r1) && defined(r2)) {
-                return round_result(amount * r1/r2, precision)
+                return round_result(amount * (r1/r2), precision)
             }
         }
 
@@ -532,7 +532,7 @@ if (__FILE__ == __MAIN__) {
         Welcome to smart-units #{VERSION.float} in interactive mode.
         EOT
         loop {
-            var line = read(">> ", String) \\ break
+            var line = read(">> ", String) -> \\ break
 
             if (line ~~ ['q', 'exit']) {
                 break
